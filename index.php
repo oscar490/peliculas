@@ -14,24 +14,13 @@
         <?php
             try {
                 require 'auxiliar.php';
-                $titulo = filter_input(INPUT_GET, 'titulo');
-                
+                $titulo = trim(filter_input(INPUT_GET, 'titulo')) ?? '';
+
                 $pdo = conectar();
-                $sent = $pdo->query("SELECT titulo, anyo, sinopsis, nombre
-                                AS genero
-                              FROM peliculas p
-                              JOIN generos g
-                                ON p.genero_id = g.id");
 
-                $consulta = $sent->fetchAll();
+                $filasBuscadas = buscarPelicula($pdo, $titulo);
+                mostrarResultados($filasBuscadas);
 
-
-                if (empty($_GET)) {
-                    mostrarResultados($consulta);
-                } else {
-                    $filasBuscadas = buscarPelicula($pdo, $titulo);
-                    mostrarResultados($filasBuscadas);
-                }
             } catch (Exception $e) {
                 mostrarErrores($e);
             }

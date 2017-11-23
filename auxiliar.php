@@ -33,8 +33,8 @@ function buscarPelicula(PDO $pdo, string $titulo): array
                   FROM peliculas p
                   JOIN generos g
                     ON p.genero_id = g.id
-                 WHERE titulo = :titulo");
-    $sent->execute([':titulo' =>  $titulo]);
+                 WHERE lower(titulo) LIKE lower(:titulo)");
+    $sent->execute([':titulo' =>  "%$titulo%"]);
 
     if ($sent->rowCount() === 0) {
         throw new Exception('No existe la película');
@@ -47,12 +47,14 @@ function buscarPelicula(PDO $pdo, string $titulo): array
 function mostrarResultados(array $consulta)
 {
     ?>
-    <table border="1">
+    <br />
+    <table border="1" align='center'>
         <thead>
             <th>Título</th>
             <th>Año</th>
             <th>Sinopsis</th>
             <th>Género</th>
+            <th>Operaciones</th>
         </thead>
         <tbody>
             <?php foreach ($consulta as $filas): ?>
@@ -61,6 +63,7 @@ function mostrarResultados(array $consulta)
                     <td><?= h($filas['anyo'])?></td>
                     <td><?= h($filas['sinopsis'])?></td>
                     <td><?= h($filas['genero'])?></td>
+                    <td><a href='borrar.php'>Borrar</a></td>
                 </tr>
             <?php endforeach ?>
         </tbody>
