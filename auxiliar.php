@@ -43,6 +43,29 @@ function buscarPelicula(PDO $pdo, string $titulo): array
     return $sent->fetchAll();
 }
 
+function comprobarParametro($parametro)
+{
+    if ($parametro === null) {
+        throw new Exception('Parámetro incorrecto');
+    }
+}
+
+function comprobarPelicula(PDO $pdo, string $titulo): array
+{
+    $sent = $pdo->prepare("SELECT *
+                     FROM peliculas
+                    WHERE titulo = :titulo");
+
+    $sent->execute([':titulo'=>$titulo]);
+
+    if ($sent->rowCount() === 0) {
+        throw new Exception('La Película no existe');
+    }
+
+    return $sent->fetch();
+
+}
+
 
 function mostrarResultados(array $consulta)
 {
@@ -63,7 +86,7 @@ function mostrarResultados(array $consulta)
                     <td><?= h($filas['anyo'])?></td>
                     <td><?= h($filas['sinopsis'])?></td>
                     <td><?= h($filas['genero'])?></td>
-                    <td><a href='borrar.php'>Borrar</a></td>
+                    <td><a href='borrar.php?titulo=<?= h($filas['titulo'])?>'>Borrar</a></td>
                 </tr>
             <?php endforeach ?>
         </tbody>
@@ -74,7 +97,7 @@ function mostrarResultados(array $consulta)
 function mostrarErrores(Exception $e)
 {
     ?>
-        <h3><?= $e->getMessage()?></h3>
+        <h3>Error: <?= $e->getMessage()?></h3>
         <a href="index.php">Volver</a>
     <?php
 }
