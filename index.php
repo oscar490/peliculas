@@ -1,3 +1,4 @@
+<?php session_start() ?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -19,6 +20,13 @@
                 $titulo = trim(filter_input(INPUT_GET, 'titulo')) ?? '';
 
                 $pdo = conectar();
+
+                if (isset($_SESSION['mensaje'])) {
+                  ?>
+                    <h4><?= $_SESSION['mensaje'] ?></h4>
+                  <?php
+                    unset($_SESSION['mensaje']);
+                }
 
                 $filasBuscadas = buscarPelicula($pdo, $titulo);
                 mostrarResultados($filasBuscadas);

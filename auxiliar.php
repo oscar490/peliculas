@@ -66,6 +66,14 @@ function comprobarPelicula(PDO $pdo, string $titulo): array
 
 }
 
+function borrarPelicula(PDO $pdo, $titulo)
+{
+  $sent = $pdo->prepare("DELETE FROM peliculas
+                               WHERE titulo = :titulo");
+
+  return $sent->execute([':titulo'=>$titulo]);
+}
+
 
 function mostrarResultados(array $consulta)
 {

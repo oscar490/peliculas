@@ -1,3 +1,4 @@
+<?php session_start() ?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -19,11 +20,10 @@
             ?>
             <h3>¿Seguro que desea borrar la película <?= $filas['titulo'] ?>?</h3>
 
-            <form action="hacer_borrado.php?" method="post">
+            <form action="hacer_borrado.php" method="post">
                 <input type="submit" value="Si">
                 <input type="hidden" name="titulo" value="<?= $filas['titulo'] ?>">
-                <input type="submit" value="No" formaction="index.php"
-                    formmethod="get" >
+                <a href='index.php'>No</a>
             </form>
             <?php
         } catch (Exception $e) {
