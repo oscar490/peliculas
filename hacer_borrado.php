@@ -9,18 +9,19 @@
         <?php
         require 'auxiliar.php';
 
-        $titulo = filter_input(INPUT_POST, 'titulo');
+        $id = filter_input(INPUT_POST, 'id');
+
         $pdo = conectar();
 
         try {
-            comprobarParametro($titulo);
-            comprobarPelicula($pdo, $titulo);
+            comprobarParametro($id);
+            comprobarPelicula($pdo, $id);
 
-            if (borrarPelicula($pdo, $titulo)) {
+            if (borrarPelicula($pdo, $id)) {
               $_SESSION['mensaje'] = 'Se ha borrado la película';
               header('Location: index.php');
             }
-            var_dump($_SESSION);
+
 
         } catch (Exception $e) {
             mostrarErrores($e);
