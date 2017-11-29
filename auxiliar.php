@@ -28,24 +28,54 @@ function h(string $cadena): string
  */
 function buscarPelicula(PDO $pdo, string $titulo): array
 {
-    $sent = $pdo->prepare("SELECT titulo, anyo, sinopsis, nombre
-                    AS genero
-                  FROM peliculas p
-                  JOIN generos g
-                    ON p.genero_id = g.id
-                 WHERE lower(titulo) LIKE lower(:titulo)");
+    $sent = $pdo->prepare("SELECT p.id, p.titulo, p.anyo, p.sinopsis, g.nombre
+                               AS genero
+                             FROM peliculas p
+                             JOIN generos g
+                               ON p.genero_id = g.id
+                            WHERE lower(titulo) LIKE lower(:titulo)");
     $sent->execute([':titulo' =>  "%$titulo%"]);
 
+    return $sent->fetchAll();
+}
+
+function comprobarParametro($parametro)
+{
+    if ($parametro === null) {
+        throw new Exception('Parámetro incorrecto');
+    }
+}
+
+function comprobarPelicula(PDO $pdo, int $id): array
+{
+
+    $sent = $pdo->prepare("SELECT *
+                     FROM peliculas
+                    WHERE id = :id");
+
+    $sent->execute([':id'=>$id]);
+
     if ($sent->rowCount() === 0) {
-        throw new Exception('No existe la película');
+        throw new Exception('La Película no existe');
     }
 
-    return $sent->fetchAll();
+    return $sent->fetch();
+
+}
+
+function borrarPelicula(PDO $pdo, $id)
+{
+  $sent = $pdo->prepare("DELETE FROM peliculas
+                               WHERE id = :id");
+
+  return $sent->execute([':id'=>$id]);
+
 }
 
 
 function mostrarResultados(array $consulta)
 {
+
     ?>
     <br />
     <table border="1" align='center'>
@@ -57,13 +87,18 @@ function mostrarResultados(array $consulta)
             <th>Operaciones</th>
         </thead>
         <tbody>
-            <?php foreach ($consulta as $filas): ?>
+            <?php foreach ($consulta as $filas):?>
                 <tr>
                     <td><?= h($filas['titulo'])?></td>
                     <td><?= h($filas['anyo'])?></td>
                     <td><?= h($filas['sinopsis'])?></td>
                     <td><?= h($filas['genero'])?></td>
-                    <td><a href='borrar.php'>Borrar</a></td>
+                    <td>
+                        <form action="hacer_borrado.php" method="post">
+                            <input type="hidden" name="id" value="<?= $filas['id']?>">
+                            <input type="submit"  value="Borrar">
+                        </form>
+                    </td>
                 </tr>
             <?php endforeach ?>
         </tbody>
@@ -74,7 +109,7 @@ function mostrarResultados(array $consulta)
 function mostrarErrores(Exception $e)
 {
     ?>
-        <h3><?= $e->getMessage()?></h3>
+        <h3>Error: <?= $e->getMessage()?></h3>
         <a href="index.php">Volver</a>
     <?php
 }
