@@ -29,7 +29,6 @@
                 }
 
                 $filasBuscadas = buscarPelicula($pdo, $titulo);
-
                 mostrarResultados($filasBuscadas);
 
             } catch (Exception $e) {

@@ -10,15 +10,16 @@
         require 'auxiliar.php';
 
         $id = filter_input(INPUT_POST, 'id');
-
+        var_dump($id);
         $pdo = conectar();
 
         try {
             comprobarParametro($id);
-            comprobarPelicula($pdo, $id);
+            $fila = comprobarPelicula($pdo, $id);
 
             if (borrarPelicula($pdo, $id)) {
-              $_SESSION['mensaje'] = 'Se ha borrado la película';
+              $nombrePelicula = $fila['titulo'];
+              $_SESSION['mensaje'] = "Se ha borrado la película $nombrePelicula";
               header('Location: index.php');
             }
 

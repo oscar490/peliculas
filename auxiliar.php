@@ -28,7 +28,7 @@ function h(string $cadena): string
  */
 function buscarPelicula(PDO $pdo, string $titulo): array
 {
-    $sent = $pdo->prepare("SELECT id, titulo, anyo, sinopsis, nombre
+    $sent = $pdo->prepare("SELECT p.id, p.titulo, p.anyo, p.sinopsis, g.nombre
                                AS genero
                              FROM peliculas p
                              JOIN generos g
@@ -69,6 +69,7 @@ function borrarPelicula(PDO $pdo, $id)
                                WHERE id = :id");
 
   return $sent->execute([':id'=>$id]);
+
 }
 
 
