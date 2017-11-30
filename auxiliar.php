@@ -106,10 +106,41 @@ function mostrarResultados(array $consulta)
     <?php
 }
 
+function comprobarTitulo($titulo)
+{
+    if ($titulo === '') {
+      throw new Exception('Título obligatorio');
+    }
+}
+
+function comprobarAnyo($anyo)
+{
+    if ($anyo === '') {
+      return;
+    }
+
+    if ($anyo <= 0) {
+      throw new Exception('Año no válido');
+    }
+}
+
+function comprobarGenero($pdo, $genero_id)
+{
+    $sent = $pdo->prepare('SELECT *
+                             FROM generos
+                            WHERE id = :genero_id');
+
+    $sent->execute([':genero_id'=>$genero_id]);
+
+    if ($sent->rowCount() === 0) {
+        throw new Exception('No existe el Género indicado');
+    }
+
+}
+
 function mostrarErrores(Exception $e)
 {
     ?>
         <h3>Error: <?= $e->getMessage()?></h3>
-        <a href="index.php">Volver</a>
     <?php
 }
